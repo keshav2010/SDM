@@ -22,8 +22,15 @@ public class Student implements Serializable,Comparable<Student>{
 	public String age;
 	public char gender;
 	public int standard;//standard=class in which student studies
+	
+	//data for attendence
+	private int total_classes;
+	private int attended_classes;
+	private float attendence;
+	//-------------------
+	
 	//class | name | id | fathername |mothername | fathermobile |mothermobile 
-	//public char batch;
+	public String batch; //NEW ENTRY : 14/07/2017 | Friday 
 	public Student(int std){
 		name=null;
 		address=null;
@@ -36,7 +43,10 @@ public class Student implements Serializable,Comparable<Student>{
 		age=null;
 		gender=' ';
 		standard=std;
-
+		batch=new String("A"); //TOTAL AVAILABLE BATCHES : 4 ( A,B,C,D)
+		total_classes=0;
+		attended_classes=0;
+		attendence=0;
 	}
 	public Student(Student std) {
 		name=new String(std.name);
@@ -50,7 +60,10 @@ public class Student implements Serializable,Comparable<Student>{
 		age=new String(std.age);
 		gender=std.gender;
 		standard=std.standard;
-		// TODO Auto-generated constructor stub
+		batch=new String(std.batch);
+		total_classes=std.total_classes;
+		attended_classes=std.attended_classes;
+		attendence=std.attendence;
 	}
 	@Override //check if id is same. return 0, else check for > and < 
 	public int compareTo(Student std) { 
@@ -61,5 +74,22 @@ public class Student implements Serializable,Comparable<Student>{
 		if(id.equals(std.id) || (name.equals(std.name) && address.equals(std.address) && subject.equals(std.subject)&&fathername.equals(std.fathername)&&mothername.equals(std.mothername)&&fathermobile.equals(std.fathermobile)&&mothermobile.equals(std.mothermobile)&&age.equals(std.age)&&gender==std.gender))
 			return 0; //objects are equal if either id is same or id is different but all other values are same
 		return name.compareTo(std.name);//this helps arrange records according to 
+	}
+
+	public void markPresent(){
+		attended_classes++;
+		total_classes++;
+		System.out.println("MarkedPresent, attended classes = "+attended_classes+" tc = "+total_classes);
+	}
+	public void markAbsent(){
+		total_classes++;
+		System.out.println("MarkedAbsent, attended classes = "+attended_classes+" tc = "+total_classes);
+	}
+	public float getAttendencePercentage(){
+		if(total_classes>0)
+			attendence = ((float)attended_classes/total_classes) * 100.0f;
+		else return 0;
+		return attendence;
+		
 	}
 }

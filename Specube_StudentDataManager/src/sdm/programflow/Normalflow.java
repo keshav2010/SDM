@@ -75,6 +75,7 @@ public class Normalflow {
 					@Override
 						public void actionPerformed(ActionEvent arg0){
 							normal_frame.dispose();
+							System.exit(0);
 						}
 					});
 					btn.setName("exit_button");

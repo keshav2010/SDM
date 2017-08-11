@@ -11,7 +11,8 @@ package sdm.data;
 //SDC is however capable of performing small string manipulations such as trimming (removing extra-spaces)
 
 
-//CHECK : NAME , CLASS, ID, AGE, ADDRESS, GENDER, SUBJECT, MOBILE.
+//CHECK : NAME , CLASS, ID, AGE, ADDRESS, GENDER, SUBJECT, MOBILE. 
+//CHECK : BATCH // latest addition
 public class StudentDataChecker {
 	
 	//FLAGS 
@@ -22,7 +23,8 @@ public class StudentDataChecker {
 			SDC_ADDRESS=5,
 			SDC_SUBJECT=6,
 			SDC_MOBILE=7,
-			SDC_GENDER=8; //This might not be required 
+			SDC_GENDER=8, //This might not be required 
+			SDC_BATCH=9;
 	
 	public static int isValid(int parameter,String value){
 		if(parameter == SDC_NAME){
@@ -107,8 +109,12 @@ public class StudentDataChecker {
 			}
 			return 1;
 		}
-		
-		
+		else if(parameter==SDC_BATCH){
+			if(value.trim().charAt(0)>='A'&&value.trim().charAt(0)<='D'){
+				return 1;
+			}
+			else return -1;
+		}
 		return 0;
 	}
 }

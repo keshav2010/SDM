@@ -23,7 +23,7 @@ public class Dialogbox extends JDialog{
 		stdView=new StudentDataViewer(studentData,modify);
 		setResizable(resizable);
 		setBounds(dimension);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);	
 	//	this.getContentPane().setLayout(mgr);
 		add(stdView);
 		pack();

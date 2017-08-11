@@ -76,23 +76,21 @@ public class StudentDataViewer extends JPanel{
 		label_list.add(new JLabel("Subjects:"));
 		label_list.add(new JLabel("Address:"));
 		label_list.add(new JLabel("Student ID:"));
+		label_list.add(new JLabel("Batch:"));
+		
+		//NEW CODE HERE : ADDED ON 10/08/2017 , THURSDAY 
+		label_list.add(new JLabel("Attendence : "));
+		//END OF NEW CODE 
 		
 		info_list.add(new JTextField(student.name));
-		switch(student.standard){
-		case 6:info_list.add(new JTextField("6th"));break;
-		case 7:info_list.add(new JTextField("7th"));break;
-		case 8:info_list.add(new JTextField("8th"));break;
-		case 9:info_list.add(new JTextField("9th"));break;
-		case 10:info_list.add(new JTextField("10th"));break;
-		case 11:info_list.add(new JTextField("11th"));break;
-		case 12:info_list.add(new JTextField("12th"));break;
-		}
+		info_list.add(new JTextField(student.standard+"th"));
 		
 		info_list.add(new JTextField(student.fathername));
 		info_list.add(new JTextField(student.mothername));
 		info_list.add(new JTextField(student.fathermobile));
 		info_list.add(new JTextField(student.mothermobile));
 		info_list.add(new JTextField(student.age));
+		
 		
 		if(student.gender=='M'){
 			btn_grp.setSelected(rb_male.getModel(), true);
@@ -113,7 +111,15 @@ public class StudentDataViewer extends JPanel{
 		info_list.add(new JTextField(student.address));
 		info_list.add(new JTextField(student.id));
 		this.setLayout(new GridBagLayout());
-
+		
+		info_list.add(new JTextField(new String(student.batch+"")));
+		
+		//NEW CODE HERE : ADDED ON 10/08/2017 , THURSDAY 
+		info_list.add(new JTextField(new String(student.getAttendencePercentage()+"")));
+		//END OF NEW CODE 
+		
+		
+		System.out.println("added to info_list : " + student.batch);//TODO : Debug line should be removed
 		if(!Modify){
 			this.setBackground(Color.YELLOW);
 			for(JTextField temp:info_list){
@@ -137,7 +143,7 @@ public class StudentDataViewer extends JPanel{
 					String text=null;
 					boolean isValid=true;
 					//checking validity of new data entered
-					for(int i=0;i<10;i++){
+					for(int i=0;i<=10;i++){
 						text=new String(info_list.get(i).getText().trim());
 						if(text.length()==0){
 							new Dialogbox("Error",false,new Rectangle(getLocationOnScreen().getLocation().x,getLocationOnScreen().getLocation().y+50,220,100),null,"No Empty Field Allowed.");
@@ -205,6 +211,12 @@ public class StudentDataViewer extends JPanel{
 									isValid=false;
 								}
 								break;
+							case 10://batch
+								if(StudentDataChecker.isValid(StudentDataChecker.SDC_BATCH, text)!=1){
+									new Dialogbox("Error",false,new Rectangle(getLocationOnScreen().getLocation().x,getLocationOnScreen().getLocation().y+50,220,100),null,"BATCH MUST BE BETWEEN A to D.");
+									isValid=false;
+								}
+								break;
 							}//eo-switch
 						}//eo-else
 					}//eo-for-loop
@@ -230,19 +242,20 @@ public class StudentDataViewer extends JPanel{
 						if(std_class>=6 && std_class<=12)
 						{	//System.out.println("std class value in range "+std_class);
 							try 
-							{
+							{	//LIST INDEX : 0 to 10, 1 is student's standard (class) 
 								//-------------------------------
 								newStudentRecord=new Student(std_class);
-								newStudentRecord.name=new String(info_list.get(0).getText());
-								newStudentRecord.id=new String(info_list.get(9).getText());
-								newStudentRecord.fathername=new String(info_list.get(2).getText());
-								newStudentRecord.mothername=new String(info_list.get(3).getText());
-								newStudentRecord.fathermobile=new String(info_list.get(4).getText());
-								newStudentRecord.mothermobile=new String(info_list.get(5).getText());
-								newStudentRecord.address=new String(info_list.get(8).getText());
-								newStudentRecord.subject=new String(info_list.get(7).getText());
-								newStudentRecord.age=new String(info_list.get(6).getText());
-								
+								newStudentRecord.name=new String(info_list.get(0).getText().trim());
+								newStudentRecord.fathername=new String(info_list.get(2).getText().trim());
+								newStudentRecord.mothername=new String(info_list.get(3).getText().trim());
+								newStudentRecord.fathermobile=new String(info_list.get(4).getText().trim());
+								newStudentRecord.mothermobile=new String(info_list.get(5).getText().trim());
+								newStudentRecord.age=new String(info_list.get(6).getText().trim());
+								newStudentRecord.subject=new String(info_list.get(7).getText().trim());
+								newStudentRecord.address=new String(info_list.get(8).getText().trim());
+								newStudentRecord.id=new String(info_list.get(9).getText().trim());
+								newStudentRecord.batch=new String(info_list.get(10).getText().trim());
+								//------------------------------------------
 								if(rb_male.isSelected())
 								{
 									//System.out.println("MALE is Selected");
@@ -325,12 +338,10 @@ public class StudentDataViewer extends JPanel{
 							} 
 							catch (IOException e) 
 							{
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} 
 							catch (ClassNotFoundException e) 
 							{
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -357,7 +368,6 @@ public class StudentDataViewer extends JPanel{
 			this.add(temp,c);//add label
 			c.gridy++;
 		}
-		
 		c.gridy=0;
 		c.gridx++;
 		for(JTextField temp:info_list){
@@ -374,11 +384,11 @@ public class StudentDataViewer extends JPanel{
 			else this.add(temp, c);
 			c.gridy++;
 		}
-		
 		if(Modification)//if the view-mode is "MODIFICATION", then add a button
 		{
 			info_list.get(1).setEditable(false);
 			info_list.get(9).setEditable(false);
+			info_list.get(11).setEditable(false);
 			c.gridx=1;
 			this.add(btn_UpdateRecord, c);
 		}

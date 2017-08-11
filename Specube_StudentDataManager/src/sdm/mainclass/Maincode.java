@@ -10,7 +10,6 @@ public class Maincode {
 		file.delete(); //Remove this code during release/final build
 		
 		if(file.exists()){
-			
 			//System.out.print("CONFIG IS COMPLETE "); //debug purpose only, remove during release time
 			//System.out.print(file.getAbsolutePath());//debug only, remove during release time
 			new Normalflow().start();

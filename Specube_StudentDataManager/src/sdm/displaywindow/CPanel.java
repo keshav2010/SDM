@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -67,7 +68,24 @@ public class CPanel extends JPanel{
 			this.removeAll();
 			this.updateUI();
 			this.setBorder(new TitledBorder(new BevelBorder(2),"Advance User Settings", 2,1));
+			this.setLayout(new GridLayout(3,3,4,4));
+			this.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+			show_choice();	
 		}
+	}
+	private void show_choice(){
+		JButton btn_attendence=new JButton("Attendence");
+		JButton btn_shiftRecords=new JButton("Shift Records");
+		btn_attendence.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				show_files(3);
+			}
+			
+		});
+		this.add(btn_attendence);
+		this.add(btn_shiftRecords);
 	}
 			/*
 	 * show_files(int entrypoint) 
@@ -79,6 +97,9 @@ public class CPanel extends JPanel{
 	 * >> entrypoint = 3 <not  yet decided this>
 	 */
 	private void show_files(int entrypoint){  
+		this.removeAll();
+		this.updateUI();
+
 		ArrayList<JButton> fileButtons = new ArrayList<JButton>();
 		
 		int x;
@@ -156,7 +177,8 @@ public class CPanel extends JPanel{
 					});
 					
 				} 
-				else if(entrypoint==2){// view data CLICKED
+				else if(entrypoint==2)
+				{// view data CLICKED
 					btn.setBackground(Color.darkGray);
 					btn.setForeground(Color.green);
 					btn.addActionListener(new ActionListener(){
@@ -197,6 +219,49 @@ public class CPanel extends JPanel{
 						
 					});//end of btn.addaction stuff
 				}
+				else if(entrypoint==3)
+				{	System.out.print("ep3");
+					btn.setBackground(Color.white);
+					btn.setForeground(Color.black);
+					btn.addActionListener(new ActionListener(){
+						
+						public void actionPerformed(ActionEvent e) {
+							//System.out.println(((JButton)e.getSource()).getText() + " Pressed");		
+								switch(((JButton)e.getSource()).getText()){
+								case "Class 6":
+									//System.out.println("Class 6 Selected");
+									set_view_attendence(6);
+									break;
+								case "Class 7":
+									//System.out.println("Class 7 Selected");
+									set_view_attendence(7);
+									break;
+								case "Class 8":
+									//System.out.println("Class 8 Selected");
+									set_view_attendence(8);
+									break;
+								case "Class 9":
+									//System.out.println("Class 9 Selected");
+									set_view_attendence(9);
+									break;
+								case "Class 10":
+									//System.out.println("Class 10 Selected");
+									set_view_attendence(10);
+									break;
+								case "Class 11":
+									//System.out.println("Class 11 Selected");
+									set_view_attendence(11);
+									break;
+								case "Class 12":
+									//System.out.println("Class 12 Selected");
+									set_view_attendence(12);
+									break;
+							}
+						}
+					
+					});//end of btn.addaction stuff				
+
+				}
 				this.add(btn);
 			}
 		}catch (IOException e) { 
@@ -206,14 +271,14 @@ public class CPanel extends JPanel{
 		
 	}//end of function show_files(int entrypoint)
 		
-	public void set_view_addRecord(int ch){ //function to ADD NEW RECORD into file, ch represent classes file where data is to be added
+	public void set_view_addRecord(int ch){ //function to ADD NEW RECORD into file, ch represent classes file where data is to be added TODO set_view_addrecord
 		this.removeAll();
 		this.updateUI();//refresh screen to make sure everything works fine
 		show_form_addRecord(ch);
 	}
-	private void show_form_addRecord(int choice){ //fxn creates complete form-Window for adding DATA to a file
+	private void show_form_addRecord(int choice){ //fxn creates complete form-Window for adding DATA to a file //TODO : show_form_addRecord
 		
-		final int total_textlabels = 10;
+		final int total_textlabels = 11;//10;
 		final int total_textfields = 9;//10-1 (gender uses radio buttons)
 		ArrayList<JLabel>textLabels = new ArrayList<JLabel>(); //set ups the form GUI 
 		ArrayList<JTextField>textFields = new ArrayList<JTextField>();//set ups
@@ -221,6 +286,9 @@ public class CPanel extends JPanel{
 		JRadioButton rb_male = new JRadioButton("Male"),rb_female=new JRadioButton("Female");//gender selection buttons
 		ButtonGroup btn_grp = new ButtonGroup();
 		btn_grp.add(rb_male);btn_grp.add(rb_female);
+		
+		String[] batchStrings = {"A","B","C","D"};
+		JComboBox<String> batchList = new JComboBox<String>(batchStrings);
 		
 		JButton btn_submit = new JButton("Submit");
 		JLabel label_class=new JLabel("ADDITION OF RECORDS FOR CLASS "+Integer.toString(choice));
@@ -259,6 +327,9 @@ public class CPanel extends JPanel{
 				break;
 			case 9:
 				temp.setText("Gender"); //does not need a textField , instead RADIOBUTTONS as input 
+				break;
+			case 10:
+				temp.setText("Batch");
 				break;
 			}//end of switch
 			textLabels.add(temp);
@@ -300,6 +371,7 @@ public class CPanel extends JPanel{
 		}//end of for : textfields
 		label_class.setForeground(Color.cyan);
 		//SETTING UP ELEMENTS FOR DISPLAYING THE FORM
+		
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints layout_property = new GridBagConstraints();
 		
@@ -329,15 +401,28 @@ public class CPanel extends JPanel{
 			}
 			row++;
 		}
+		//text : GENDER (label)
 		layout_property.gridy=row+1;
 		layout_property.gridx=0;
 		layout_property.gridwidth=1;
 		this.add(textLabels.get(9),layout_property); //GENDER text/label
+		
+		//checkboxes (2 cb, male and female)
 		layout_property.gridx=1;
 		this.add(rb_male, layout_property);
 		layout_property.gridx=2;
 		this.add(rb_female, layout_property);
+		
+		
+		layout_property.gridx=0;
+		layout_property.gridwidth=1;
 		layout_property.gridy=row+2;
+		this.add(textLabels.get(10),layout_property);
+		layout_property.gridx=1;
+		layout_property.gridwidth=2;
+		this.add(batchList, layout_property);
+		
+		layout_property.gridy=row+3;
 		layout_property.gridx=1;
 		layout_property.gridwidth=2;
 		this.add(btn_submit, layout_property);
@@ -353,13 +438,19 @@ public class CPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name=null,id=null,fname=null,mname=null,fmobile=null,mmobile=null,address=null,subject=null,age = null;
-				
+				String batch;
 				//1. Check if Form filled is Valid in all aspects
 				boolean isValid=true;
 				if( !(rb_male.isSelected() || rb_female.isSelected())){ //checking if user has not checked any of the gender checkbox
 					isValid=false;//invalidate form
 					new Dialogbox("Error",false,new Rectangle(200,200,200,100),null,"Gender not selected");
 				}    
+				batch=batchList.getSelectedItem().toString();
+				if(!(batch.equals("A") ||batch.equals("B")||batch.equals("C")||batch.equals("D")))
+				{
+					isValid=false;
+					new Dialogbox("Error",false,new Rectangle(200,200,200,100),null,"Batch Selection Wrong!");
+				}
 				
 				for(int items=0;items<total_textfields;items++){ //now checking each TEXTFIELD one by one 	
 					JTextField temp=textFields.get(items);
@@ -476,29 +567,8 @@ public class CPanel extends JPanel{
 					 * > Once we are done, we will AGAIN SAVE WHOLE TreeSet object back into the file 
 					*/
 					String file_name = null;
-					switch(choice){
-					case 6:
-						file_name=new String("std6.dat");
-						break;
-					case 7:
-						file_name=new String("std7.dat");
-						break;
-					case 8:
-						file_name=new String("std8.dat");
-						break;
-					case 9:
-						file_name=new String("std9.dat");
-						break;
-					case 10:
-						file_name=new String("std10.dat");
-						break;
-					case 11:
-						file_name=new String("std11.dat");
-						break;
-					case 12:
-						file_name=new String("std12.dat");
-						break;
-					}
+					file_name=new String("std"+choice+".dat"); //
+					
 					FileOutputStream fout=null;
 					FileInputStream fin = null;
 					TreeSet<Student> Student_Data = new TreeSet<Student>();
@@ -512,16 +582,13 @@ public class CPanel extends JPanel{
 					} catch (FileNotFoundException e3) {
 						
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					try {
 						fout = new FileOutputStream(file_name,false/*true*/);//APPEND is false because we are now storing whole TreeSet once
 					} catch (FileNotFoundException e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 						System.exit(1);
 
@@ -543,6 +610,7 @@ public class CPanel extends JPanel{
 							student.gender='M';
 						else if(rb_female.isSelected())
 							student.gender='F';
+						student.batch=new String(batch);
 						student.standard=choice;
 						boolean isSaved=Student_Data.add(student);
 						if(!isSaved){
@@ -556,7 +624,6 @@ public class CPanel extends JPanel{
 						new Dialogbox("Submitted",false,new Rectangle(200,200,200,100),null,"Successfully Registered!");
 						}
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 						System.exit(1);
 					}
@@ -574,34 +641,9 @@ public class CPanel extends JPanel{
 		this.removeAll();
 		this.updateUI();
 	//	JTable table = null;
-		if(ch==6){
-			table=new JTable(new CTableModel("std6.dat"));
-			CTableModel.resetValue("std6.dat");//resets active_file parameter of table, Updates file data
-		}
-		else if(ch==7){
-			table=new JTable(new CTableModel("std7.dat"));
-			CTableModel.resetValue("std7.dat");
-		}
-		else if(ch==8){
-			table=new JTable(new CTableModel("std8.dat"));
-			CTableModel.resetValue("std8.dat");
-		}
-		else if(ch==9){
-			table=new JTable(new CTableModel("std9.dat"));
-			CTableModel.resetValue("std9.dat");
-		}
-		else if(ch==10){
-			table=new JTable(new CTableModel("std10.dat"));
-			CTableModel.resetValue("std10.dat");
-		}
-		else if(ch==11){
-			table=new JTable(new CTableModel("std11.dat"));
-			CTableModel.resetValue("std11.dat");
-		} 
-		else if(ch==12){
-			table=new JTable(new CTableModel("std12.dat"));
-			CTableModel.resetValue("std12.dat");
-		}
+		table=new JTable(new CTableModel("std"+ch+".dat"));
+		CTableModel.resetValue("std"+ch+".dat");
+		
 		//table.updateUI();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setRowSelectionAllowed(true);
@@ -783,6 +825,7 @@ public class CPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				table.updateUI();
+				CTableModel.UpdateFile();
 			}
 			
 		});
@@ -803,7 +846,244 @@ public class CPanel extends JPanel{
 			
 		});
 	}
-}
+	public void set_view_attendence(int ch){ //TODO : set_view_attendence()
+		this.removeAll();
+		this.updateUI();
+		//	JTable table = null;
+		table=new JTable(new CTableModel("std"+ch+".dat"));
+		CTableModel.resetValue("std"+ch+".dat");
+		
+		//table.updateUI();
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setRowSelectionAllowed(true);
+		table.setColumnSelectionAllowed(false);
+		
+		final String[] batchStrings={"All","A","B","C","D"};
+		JComboBox<String> choice_batchList=new JComboBox<String>(batchStrings);
+		JLabel label_batchChoice=new JLabel("Filter Batch");
+		label_batchChoice.setForeground(Color.white);
+		
+		JButton btn_ViewRecord=new JButton("View Record");
+		JButton btn_MarkPresent = new JButton("Mark Present");
+		JButton btn_MarkAbsent = new JButton("Mark Absent");
+		JButton btn_Refresh = new JButton("Refresh List");
+		JButton btn_Submit = new JButton("Submit");
+		
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints layout_property = new GridBagConstraints();
+		
+		table.setFillsViewportHeight(true);
+		table.setVisible(true);
+		//SCROLL BAR CODE
+		JScrollPane js=new JScrollPane(table); 
+		js.setPreferredSize(new Dimension(570,400));
+		//END OF SCROLL BAR CODE
+		layout_property.gridx=0;
+		layout_property.gridy=0;
+		layout_property.gridheight=1;
+		layout_property.gridwidth=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(label_batchChoice,layout_property);
+		
+		layout_property.gridx=1;
+		layout_property.gridy=0;
+		layout_property.gridheight=1;
+		layout_property.gridwidth=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(choice_batchList,layout_property);
+		
+		layout_property.gridx=0;
+		layout_property.gridy=1;
+		layout_property.gridheight=6;
+		layout_property.gridwidth=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(js,layout_property);//,layout_property);
+		layout_property.gridx=1;
+		layout_property.gridy=1;
+		layout_property.gridwidth=1;
+		layout_property.gridheight=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(btn_ViewRecord, layout_property);
+		
+		layout_property.gridx=1;
+		layout_property.gridy=2;
+		layout_property.gridwidth=1;
+		layout_property.gridheight=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(btn_MarkPresent,layout_property);
+		
+		layout_property.gridx=1;
+		layout_property.gridy=3;
+		layout_property.gridwidth=1;
+		layout_property.gridheight=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(btn_MarkAbsent,layout_property);
+		
+		layout_property.gridx=1;
+		layout_property.gridy=4;
+		layout_property.gridwidth=1;
+		layout_property.gridheight=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(btn_Refresh,layout_property);
+		
+		layout_property.gridx=1;
+		layout_property.gridy=5;
+		layout_property.gridwidth=1;
+		layout_property.gridheight=1;
+		layout_property.fill=GridBagConstraints.HORIZONTAL;
+		this.add(btn_Submit,layout_property);
+		//EVENT HANDLING FOR BUTTONS
+		//VIEW RECORD BUTTON
+		btn_ViewRecord.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				String selectedID;
+				Student selectedData = null;
+				//System.out.println(selectedRow);
+				//System.out.println(CTableModel.Student_List.size());
+				if(table.getRowCount()==0){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"Table is Empty!");
+				}
+				else if(selectedRow==-1){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"No Row Selected!");
+				}
+				else{
+					//System.out.println(table.getValueAt(selectedRow, 0));
+					selectedID = (String) table.getValueAt(selectedRow,0);
+					for(Student std: CTableModel.Student_List){
+						if(std.id.equals(selectedID)){
+							selectedData=new Student(std);
+							break;
+						}
+					}
+					//DISPLAY STUDENT DETAIL
+					new Dialogbox("Student Detail",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,selectedData,false);
+					
+				}
+			}
+			
+		});
+		btn_MarkPresent.addActionListener(new ActionListener(){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				String selectedID;
+				//System.out.println(selectedRow);
+				//System.out.println(CTableModel.Student_List.size());
+				if(table.getRowCount()==0){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"Table is Empty!");
+				}
+				else if(selectedRow==-1){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"No Row Selected!");
+				}
+				else{
+					//System.out.println(table.getValueAt(selectedRow, 0));
+					selectedID = (String) table.getValueAt(selectedRow,0);
+					int index=0;
+					for(Student std: CTableModel.Student_List)
+					{
+						if(std.id.equals(selectedID)){
+							
+							System.out.println("attendence is "+std.getAttendencePercentage());
+							break;
+						}
+						index++;
+					}
+					CTableModel.Student_List.get(index).markPresent();
+					System.out.println("attendence is "+CTableModel.Student_List.get(index).getAttendencePercentage());
+					//DISPLAY STUDENT DETAIL
+				}
+			}
+		});
+	//MODIFY RECORD BUTTON
+		btn_MarkAbsent.addActionListener(new ActionListener(){
+		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				String selectedID;
+				//System.out.println(selectedRow);
+				//System.out.println(CTableModel.Student_List.size());
+				if(table.getRowCount()==0){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"Table is Empty!");
+				}
+				else if(selectedRow==-1){
+					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"No Row Selected!");
+				}
+				else{
+					//System.out.println(table.getValueAt(selectedRow, 0));
+					selectedID = (String) table.getValueAt(selectedRow,0);
+					int index=0;
+					for(Student std: CTableModel.Student_List)
+					{
+						if(std.id.equals(selectedID)){
+							
+							System.out.println("attendence is "+std.getAttendencePercentage());
+							break;
+						}
+						index++;
+					}
+					CTableModel.Student_List.get(index).markAbsent();
+					System.out.println("attendence is "+CTableModel.Student_List.get(index).getAttendencePercentage());
+					//DISPLAY STUDENT DETAIL
+				}
+			}
+		});
+		//TODO : Rfresh
+			//Refresh List Button
+		btn_Refresh.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				table.updateUI();
+				String temp_batchFilter =  (String) choice_batchList.getSelectedItem();
+				
+				if(temp_batchFilter.equals("All"))
+				{
+					CTableModel.temp_StudentList = new ArrayList<Student>(CTableModel.Student_List);
+					return;
+				}
+				//create a copy of Student List of current file and store in temp_stdList, 
+				//any modification made to temp_stdList will not alter content of file
+				ArrayList<Student> temp_stdList=new ArrayList<Student>();
+				for(Student std : CTableModel.Student_List  )//TODO : Changed  ((CTableModel)table.getModel()).Student_List 
+				{	
+					if(std.batch.equals(temp_batchFilter))
+					{
+						temp_stdList.add(std);
+					}
+				}
+				//parsed Student List and filtered Data is stored in temp_stdList
+				
+				CTableModel.temp_StudentList = new ArrayList<Student>(temp_stdList);
+			}	
+		
+		});
+		
+		//Submit records button
+		btn_Submit.addActionListener(new ActionListener(){
+			@Override	
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+					if(table.getRowCount()==0){
+						new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"Table is Empty!");
+					}
+					else if(selectedRow==-1){
+						new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"No Row Selected!");
+					}
+					else
+					{
+						CTableModel.UpdateFile();
+					}
+					
+				}
+			
+			});
+		}
+	}
+//TODO : CTableModel 
 class CTableModel extends AbstractTableModel{ 
 	/**
 	 * Data Model Explanation 
@@ -811,6 +1091,9 @@ class CTableModel extends AbstractTableModel{
 	 * > for each student value in Student_Data, it is now copied into another Array Student_List
 	 * 
 	 * Student_Data (holds many objects arranged in TreeSet) --> Student_List (puts student objects in array --> PARSED each member of Student
+	 *
+	 * temp_StudentList is a upper most data storage layer, that only handles data that is shown in Table and have no interaction
+	 * with whatever data that is stored in file
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = 
@@ -819,16 +1102,18 @@ class CTableModel extends AbstractTableModel{
 				"Name",//index=1
 				"Gender",//index=2
 				"Fathername",//index=3
-				"Contact Number"//index=4
+				"Batch"//index=4
 		};
 	public static ArrayList<Student> Student_List;//=new ArrayList<Student>();
 	private static TreeSet<Student> Student_Data;// = new TreeSet<Student>();
-	
+	public static ArrayList<Student> temp_StudentList; //upper most layer of data, that has 0 Interaction with file 
+	//Student_Data is the object that is read directly from FILE in raw form (tree-structure)
+	//Student_List is a organised Data File where Raw_Data is organised in a List
 	private static String active_file=null; //added internal parameter to keep track on Active file instead of passing file name around
 	@SuppressWarnings("unchecked")
 	public CTableModel(String file_name){ 
 		
-		Student_List=new ArrayList<Student>();
+		Student_List=new ArrayList<Student>(); 
 		Student_Data=new TreeSet<Student>();
 		
 		active_file=new String(file_name);
@@ -837,33 +1122,35 @@ class CTableModel extends AbstractTableModel{
 		FileInputStream fin;
 		try 
 		{
+			System.out.println("file_name : "+file_name+" and active_file : "+active_file);
 			fin=new FileInputStream(active_file);
 			ObjectInputStream ois= new ObjectInputStream(fin);
-			Student_Data.clear();
-			Student_List.clear();
+			Student_Data.clear();  //clear old data
+			Student_List.clear(); //clear old data
 			Student_Data = new TreeSet<Student>( (TreeSet<Student>)ois.readObject() );
 		//	Student_Data=(TreeSet<Student>)ois.readObject();
 			for(Student std:Student_Data){		
 				Student_List.add(std);
 			}
+			temp_StudentList = new ArrayList<Student>(Student_List);
 			ois.close();
 		} 
 		catch (FileNotFoundException e) 
 		{
 			System.out.println("error1 : Line 930 > Cpanel : FNF");
-			// TODO Auto-generated catch block
+			// 
 		//	e.printStackTrace();
 			//System.exit(1);
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
+			//
 			System.out.println("error2 : line 936 > CPanel : IOException");
 			e.printStackTrace();
 			System.exit(1);
 		} 
 		catch (ClassNotFoundException e) {
 			System.out.println("error3");
-			// TODO Auto-generated catch block
+			//
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -888,11 +1175,11 @@ class CTableModel extends AbstractTableModel{
 			ois.writeObject(Student_Data);
 			ois.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			// 
 			e.printStackTrace();
 			System.exit(0);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			//
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -908,34 +1195,37 @@ class CTableModel extends AbstractTableModel{
 	    }
 	@Override
 	public int getColumnCount() {
-		// TODO Auto-generated method stub
 		return columnNames.length;
 	}
-
+	//
 	@Override
 	public int getRowCount() {
-		// TODO Auto-generated method stub
-		return Student_List.size();
+		//return Student_List.size();
+		return temp_StudentList.size();
 	}
+	
 	
 	@Override
 	public Object getValueAt(int row, int col) {
-		// TODO Auto-generated method stub
-		
 		if(col==0){//ID
-			return Student_List.get(row).id;
+			//return Student_List.get(row).id;
+			return temp_StudentList.get(row).id;
 		}
 		else if(col==1){ //NAME
-			return Student_List.get(row).name;
+			//return Student_List.get(row).name;
+			return temp_StudentList.get(row).name;
 		}
 		else if(col==2){// Gender
-			return Student_List.get(row).gender;
+			//return Student_List.get(row).gender;
+			return temp_StudentList.get(row).gender;
 		}
 		else if(col==3){//FatherName
-			return Student_List.get(row).fathername;
+			//return Student_List.get(row).fathername;
+			return temp_StudentList.get(row).fathername;
 		}
 		else if(col==4){//ContactNumber
-			return Student_List.get(row).fathermobile;
+			//return Student_List.get(row).batch;
+			return temp_StudentList.get(row).batch;
 		}
 		return null;
 	}
