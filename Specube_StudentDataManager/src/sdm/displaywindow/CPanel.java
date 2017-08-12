@@ -776,7 +776,7 @@ public class CPanel extends JPanel{
 			
 		});
 		
-		//Delete Record Button
+		//Delete Record Button : Alters content of 2ND LAYER (Student_List) and calls UpdateFile() method to update Data Tree
 		btn_DeleteRecord.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -787,16 +787,21 @@ public class CPanel extends JPanel{
 				}
 				else if(selectedRow==-1){
 					new Dialogbox("Error!",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"No Row Selected!");
-				}else{
-					selectedID = (String) table.getValueAt(selectedRow,0);
+				}
+				else
+				{
+					selectedID = (String) table.getValueAt(selectedRow,0); //get student ID
 					for(Student std: CTableModel.Student_List){
 						if(std.id.equals(selectedID)){
 							CTableModel.Student_List.remove(selectedRow);
 							break;
 						}
 					}
+					
 					CTableModel.UpdateFile();//it will re-form the Student_Data TREE-STRUCTURE inside CTableModel, and internally updates file
 					new Dialogbox("Deleted",false,new Rectangle(table.getLocationOnScreen().getLocation().x+200,table.getLocationOnScreen().getLocation().y+50,100,100),null,"deleted record");
+					table.removeAll();
+					System.out.println(" REFRESHED ");
 					table.updateUI();
 				}
 				
@@ -824,8 +829,8 @@ public class CPanel extends JPanel{
 		btn_Refresh.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				table.updateUI();
-				CTableModel.UpdateFile();
 			}
 			
 		});
@@ -1033,31 +1038,15 @@ public class CPanel extends JPanel{
 			}
 		});
 		//TODO : Rfresh
-			//Refresh List Button
+			//Refresh List Button in ATTENDENCE VIEW
 		btn_Refresh.addActionListener(new ActionListener(){
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				CTableModel.set_batchToRender(new String( (String)choice_batchList.getSelectedItem() ));
+
 				table.updateUI();
-				String temp_batchFilter =  (String) choice_batchList.getSelectedItem();
-				
-				if(temp_batchFilter.equals("All"))
-				{
-					CTableModel.temp_StudentList = new ArrayList<Student>(CTableModel.Student_List);
-					return;
-				}
-				//create a copy of Student List of current file and store in temp_stdList, 
-				//any modification made to temp_stdList will not alter content of file
-				ArrayList<Student> temp_stdList=new ArrayList<Student>();
-				for(Student std : CTableModel.Student_List  )//TODO : Changed  ((CTableModel)table.getModel()).Student_List 
-				{	
-					if(std.batch.equals(temp_batchFilter))
-					{
-						temp_stdList.add(std);
-					}
-				}
-				//parsed Student List and filtered Data is stored in temp_stdList
-				
-				CTableModel.temp_StudentList = new ArrayList<Student>(temp_stdList);
 			}	
 		
 		});
@@ -1110,12 +1099,29 @@ class CTableModel extends AbstractTableModel{
 	//Student_Data is the object that is read directly from FILE in raw form (tree-structure)
 	//Student_List is a organised Data File where Raw_Data is organised in a List
 	private static String active_file=null; //added internal parameter to keep track on Active file instead of passing file name around
+	
+	
+	/*batchToRender decides which Data to display,
+	 *  if set to "All", All student records are display even if batch are different
+	 *  if set to "A", Only student records belonging to batch A will be rendered
+	 *  and same goes for "B", "C" And "D"
+	 *  
+	 *  look for UpdateDataRenderLayer() method, 
+	 *  Table renders data stored in temp_StudentList
+	 *  Student_List stores the tree-data in a list-format for improved indexing and sorting process
+	 *  Student_Data stores the data in its RAW-FORM, the way its stored in the File
+	*/
+	private static String batchToRender =new String("All"); // All , A,B,C,D : change this variable to render specific batch Data (filter)
+	public static void set_batchToRender(String batch_name)
+	{
+		batchToRender=new String(batch_name);
+		updateDataRenderLayer();
+	}
 	@SuppressWarnings("unchecked")
 	public CTableModel(String file_name){ 
 		
 		Student_List=new ArrayList<Student>(); 
 		Student_Data=new TreeSet<Student>();
-		
 		active_file=new String(file_name);
 		
 		//Extracting Data from "active_file"
@@ -1174,6 +1180,9 @@ class CTableModel extends AbstractTableModel{
 			ObjectOutputStream ois=new ObjectOutputStream(fout);
 			ois.writeObject(Student_Data);
 			ois.close();
+			
+			updateDataRenderLayer(); //also update RenderLayer (temp_StudentList) since bottom layers can be altered
+			
 		} catch (FileNotFoundException e) {
 			// 
 			e.printStackTrace();
@@ -1207,6 +1216,7 @@ class CTableModel extends AbstractTableModel{
 	
 	@Override
 	public Object getValueAt(int row, int col) {
+		updateDataRenderLayer(); //update temp_StudentList data so as to Render Correct details on the Table
 		if(col==0){//ID
 			//return Student_List.get(row).id;
 			return temp_StudentList.get(row).id;
@@ -1228,6 +1238,29 @@ class CTableModel extends AbstractTableModel{
 			return temp_StudentList.get(row).batch;
 		}
 		return null;
+	}
+	private static void updateDataRenderLayer() //refresh temp_StudentList in order to render changes into table
+	{
+		
+		temp_StudentList.clear();//CLEAR Upper Data layer		
+		if(batchToRender.equals("All"))
+		{
+			CTableModel.temp_StudentList = new ArrayList<Student>(CTableModel.Student_List);
+			return;
+		}
+		//create a copy of Student List of current file and store in temp_stdList, 
+		//any modification made to temp_stdList will not alter content of file
+		//ArrayList<Student> temp_stdList=new ArrayList<Student>();
+		
+		CTableModel.temp_StudentList = new ArrayList<Student>();
+		for(Student std : CTableModel.Student_List  )//TODO : Changed  ((CTableModel)table.getModel()).Student_List 
+		{	
+			if(std.batch.equals(batchToRender))
+			{
+				CTableModel.temp_StudentList.add(std);
+			}
+			
+		}
 	}
 	
 }
